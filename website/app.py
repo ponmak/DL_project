@@ -24,7 +24,7 @@ st.subheader("dev : ข้าวทุกจาน อาหารทุกอ�
 
 # Initialize YOLO model with loaded weights
 model = YOLO("project/lts_model/runs/detect/train2/weights/best.pt")
-model.fuse()  # Fuse the model for faster inference
+# model.fuse()  # Fuse the model for faster inference
 
 # choose to use camera or upload files
 st.subheader("Choose to use camera or upload files")
