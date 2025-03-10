@@ -3,7 +3,7 @@ import os
 import ultralytics
 import supervision as sv
 import cv2
-from detection import detection, annotation, display  
+from detection import detection
 from ultralytics import YOLO
 
 # Title for the app
@@ -18,18 +18,6 @@ model.fuse()  # Fuse the model for improved inference speed
 st.subheader("Choose to use camera or upload files")
 camera = st.camera_input("Take a picture")
 uploadfiles = st.file_uploader("Upload images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
-
-def image_pipeline(image):
-    # Perform detection
-    detections = detection(image, model)
-    
-    # Annotate the image
-    annotations, annotated_image_path = annotation(detections, image)
-
-    # Display the annotated image
-    annotated_image = display(annotations, image)
-    
-    return annotated_image
 
 
 # Check if the camera input is used
@@ -49,7 +37,7 @@ if camera:
     st.image(camera, caption="Captured Image", use_container_width=True)
 
     # Run detection on the captured image
-    annotated_image = image_pipeline(camera)
+    annotated_image = detection(file_path, model)
     # Save the annotated image
     annotated_image_path = os.path.join("images", "annotated_" + file.name)
     cv2.imwrite(annotated_image_path, annotated_image)
@@ -77,4 +65,14 @@ if uploadfiles:
 
     # Run detection for each uploaded image
     for file in uploadfiles:
-       
+        file_path = os.path.join("images", file.name)
+        annotated_image = detection(file_path, model)
+
+        # Save the annotated image
+        annotated_image_path = os.path.join("images", "annotated_" + file.name)
+        cv2.imwrite(annotated_image_path, annotated_image)
+
+        # Display the annotated image
+        st.image(annotated_image, caption="Annotated Image", use_container_width=True)
+      
+    
