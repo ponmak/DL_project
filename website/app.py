@@ -16,7 +16,7 @@ st.title("Plate Detection and Cost Calculation")
 st.subheader("dev : ข้าวทุกจาน อาหารทุกอย่าง team")
 
 # Load the YOLO model
-model = YOLO("project/test_model/runs/detect/train/weights/best.pt")  # Load the trained model
+model = YOLO("project/lts_model/runs/detect/train2/weights/best.pt")  # Load the trained model
 #model.fuse()  # Fuse the model for improved inference speed
 
 # choose to use camera or upload files
