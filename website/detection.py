@@ -1,11 +1,8 @@
-from ultralytics import YOLO
 import supervision as sv
-import torch
 import cv2
 import os
 import numpy as np
 
-import streamlit as st
 
 def detection(image, model):
     """

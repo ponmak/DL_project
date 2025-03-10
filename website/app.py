@@ -3,8 +3,13 @@ import os
 import ultralytics
 import supervision as sv
 import cv2
+import torch
 from detection import detection
 from ultralytics import YOLO
+from PIL import Image,ImageOps
+
+
+torch.classes.__path__ = [os.path.join(torch.__path__[0], torch.classes.__file__)] 
 
 # Title for the app
 st.title("Plate Detection and Cost Calculation")
@@ -12,7 +17,7 @@ st.subheader("dev : ข้าวทุกจาน อาหารทุกอ�
 
 # Load the YOLO model
 model = YOLO("project/test_model/runs/detect/train/weights/best.pt")  # Load the trained model
-model.fuse()  # Fuse the model for improved inference speed
+#model.fuse()  # Fuse the model for improved inference speed
 
 # choose to use camera or upload files
 st.subheader("Choose to use camera or upload files")
@@ -57,10 +62,14 @@ if uploadfiles:
         with open(file_path, "wb") as f:
             f.write(file.getbuffer())
 
+
     st.success("Images saved successfully!")
 
     # Display the uploaded images
     for file in uploadfiles:
+        # # flip the image
+        # image_flip = Image.open(file)
+        # image_flip = Image.rotate(image_flip, 180)  # Rotate the image by 180 degrees
         st.image(file.getvalue(), caption=file.name, use_container_width=True)  # Fix for Streamlit image handling
 
     # Run detection for each uploaded image
