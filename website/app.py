@@ -1,0 +1,80 @@
+import streamlit as st
+import os
+import ultralytics
+import supervision as sv
+import cv2
+from detection import detection, annotation, display  
+from ultralytics import YOLO
+
+# Title for the app
+st.title("Plate Detection and Cost Calculation")
+st.subheader("dev : ข้าวทุกจาน อาหารทุกอย่าง team")
+
+# Load the YOLO model
+model = YOLO("project/test_model/runs/detect/train/weights/best.pt")  # Load the trained model
+model.fuse()  # Fuse the model for improved inference speed
+
+# choose to use camera or upload files
+st.subheader("Choose to use camera or upload files")
+camera = st.camera_input("Take a picture")
+uploadfiles = st.file_uploader("Upload images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+
+def image_pipeline(image):
+    # Perform detection
+    detections = detection(image, model)
+    
+    # Annotate the image
+    annotations, annotated_image_path = annotation(detections, image)
+
+    # Display the annotated image
+    annotated_image = display(annotations, image)
+    
+    return annotated_image
+
+
+# Check if the camera input is used
+if camera:
+    # Create a directory to save the images
+    if not os.path.exists("images"):
+        os.makedirs("images")
+
+    # Save the image from the camera input
+    file_path = os.path.join("images", "captured_image.jpg")
+    with open(file_path, "wb") as f:
+        f.write(camera.getbuffer())
+
+    st.success("Image saved successfully!")
+
+    # Display the captured image
+    st.image(camera, caption="Captured Image", use_container_width=True)
+
+    # Run detection on the captured image
+    annotated_image = image_pipeline(camera)
+    # Save the annotated image
+    annotated_image_path = os.path.join("images", "annotated_" + file.name)
+    cv2.imwrite(annotated_image_path, annotated_image)
+
+    # Display the annotated image
+    st.image(annotated_image, caption="Annotated Image", use_container_width=True)
+
+
+if uploadfiles:
+    # Create a directory to save the images
+    if not os.path.exists("images"):
+        os.makedirs("images")
+
+    # Save the images to the directory
+    for file in uploadfiles:
+        file_path = os.path.join("images", file.name)
+        with open(file_path, "wb") as f:
+            f.write(file.getbuffer())
+
+    st.success("Images saved successfully!")
+
+    # Display the uploaded images
+    for file in uploadfiles:
+        st.image(file.getvalue(), caption=file.name, use_container_width=True)  # Fix for Streamlit image handling
+
+    # Run detection for each uploaded image
+    for file in uploadfiles:
+       
