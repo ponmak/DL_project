@@ -44,7 +44,7 @@ if camera:
     # Run detection on the captured image
     annotated_image = detection(file_path, model)
     # Save the annotated image
-    annotated_image_path = os.path.join("images", "annotated_" + file.name)
+    annotated_image_path = os.path.join("images", "annotated_" + file_path)
     cv2.imwrite(annotated_image_path, annotated_image)
 
     # Display the annotated image
