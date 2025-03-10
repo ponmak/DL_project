@@ -6,24 +6,30 @@ import cv2
 import torch
 from detection import detection
 from ultralytics import YOLO
-from PIL import Image,ImageOps
+from PIL import Image, ImageOps
 
+# Set the page configuration
+st.set_page_config(
+    page_title="Plate Detection and Cost Calculation",
+    page_icon=":guardsman:",
+    initial_sidebar_state="expanded",
+)
 
-torch.classes.__path__ = [os.path.join(torch.__path__[0], torch.classes.__file__)] 
+# using cpu for inference
+device = torch.device("cpu")
 
 # Title for the app
 st.title("Plate Detection and Cost Calculation")
 st.subheader("dev : ข้าวทุกจาน อาหารทุกอย่าง team")
 
-# Load the YOLO model
-model = YOLO("project/lts_model/runs/detect/train2/weights/best.pt")  # Load the trained model
-#model.fuse()  # Fuse the model for improved inference speed
+# Initialize YOLO model with loaded weights
+model = YOLO("project/lts_model/runs/detect/train2/weights/best.pt")
+model.fuse()  # Fuse the model for faster inference
 
 # choose to use camera or upload files
 st.subheader("Choose to use camera or upload files")
 camera = st.camera_input("Take a picture")
 uploadfiles = st.file_uploader("Upload images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
-
 
 # Check if the camera input is used
 if camera:
@@ -44,12 +50,11 @@ if camera:
     # Run detection on the captured image
     annotated_image = detection(file_path, model)
     # Save the annotated image
-    annotated_image_path = os.path.join("images", "annotated_" + file_path)
+    annotated_image_path = os.path.join("images", "annotated_annotated_captured_image.jpg")
     cv2.imwrite(annotated_image_path, annotated_image)
 
     # Display the annotated image
     st.image(annotated_image, caption="Annotated Image", use_container_width=True)
-
 
 if uploadfiles:
     # Create a directory to save the images
@@ -62,7 +67,6 @@ if uploadfiles:
         with open(file_path, "wb") as f:
             f.write(file.getbuffer())
 
-
     st.success("Images saved successfully!")
 
     # Display the uploaded images
@@ -74,8 +78,8 @@ if uploadfiles:
 
     # Run detection for each uploaded image
     for file in uploadfiles:
-        file_path = os.path.join("images", file.name)
-        annotated_image = detection(file_path, model)
+        #file_path = os.path.join("images", file.name)
+        annotated_image = detection(file, model)
 
         # Save the annotated image
         annotated_image_path = os.path.join("images", "annotated_" + file.name)
@@ -83,5 +87,4 @@ if uploadfiles:
 
         # Display the annotated image
         st.image(annotated_image, caption="Annotated Image", use_container_width=True)
-      
-    
+

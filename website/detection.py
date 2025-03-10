@@ -2,7 +2,8 @@ import supervision as sv
 import cv2
 import os
 import numpy as np
-
+import torch
+from ultralytics import YOLO
 
 def detection(image, model):
     """
@@ -36,7 +37,7 @@ def detection(image, model):
     detections = sv.Detections.from_ultralytics(results[0]).with_nms()
 
     # Annotate image
-    box_annotator = sv.BoxAnnotator(thickness=2, color=sv.Color.GREEN)
+    box_annotator = sv.BoxAnnotator(thickness=5, color=sv.Color.GREEN)
     label_annotator = sv.LabelAnnotator()
     annotated_image = img.copy()
     annotated_image = box_annotator.annotate(scene=annotated_image, detections=detections)
